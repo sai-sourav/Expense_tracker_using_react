@@ -1,0 +1,7 @@
+.completeform {
+    padding: 2rem;
+    margin-top: 4rem;
+    border: 2px solid rgb(205, 196, 196);
+    background-color: rgb(245, 240, 235);
+    border-radius: 5px;
+}

@@ -1,15 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "./Signup.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../../../Context/user-context";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function Signup() {
   const [isLogin, setIsLogin] = useState(false);
+  const userctx = useContext(UserContext);
   const emailref = useRef();
   const pswdref = useRef();
   const confpswdref = useRef();
@@ -62,6 +64,7 @@ export default function Signup() {
           password: pswd,
           idToken: idToken,
         });
+        userctx.setIsLogin();
         navigate("/home", { replace: "true" });
       } catch (err) {
         const { error } = err.response.data;

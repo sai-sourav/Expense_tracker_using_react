@@ -4,3 +4,13 @@
 .ms-5 {
     margin-left: 40% !important;
 }
+
+.complete-profile {
+    /* border: 2px solid red; */
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    color: white;
+    align-items: center;
+    width: 21rem;
+}
