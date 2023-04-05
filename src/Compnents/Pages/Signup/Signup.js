@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "./Signup.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
@@ -13,33 +14,61 @@ export default function Signup() {
   const pswdref = useRef();
   const confpswdref = useRef();
 
+  const navigate = useNavigate();
+
   const clickHandler = async (e) => {
     e.preventDefault();
     const email = emailref.current.value;
     const pswd = pswdref.current.value;
-    const confpswd = confpswdref.current.value;
-    if (pswd === confpswd && !isLogin) {
+    if (!isLogin) {
+      const confpswd = confpswdref.current.value;
+      if (pswd === confpswd) {
+        try {
+          await axios.post(
+            `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+            {
+              email: email,
+              password: pswd,
+            }
+          );
+          e.target.reset();
+          console.log({
+            email: email,
+            password: pswd,
+          });
+          setIsLogin((prev) => !prev);
+        } catch (err) {
+          const { error } = err.response.data;
+          alert(`Error! : ${error.message}`);
+        }
+      } else {
+        alert("passwords dont match");
+      }
+    } else {
       try {
-        await axios.post(
-          `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+        const response = await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
           {
             email: email,
             password: pswd,
+            returnSecureToken: true,
           }
         );
+        const { idToken } = response.data;
+        localStorage.setItem("authToken", idToken);
         e.target.reset();
         console.log({
-            email : email,
-            password : pswd
-        })
+          email: email,
+          password: pswd,
+          idToken: idToken,
+        });
+        navigate("/home", { replace: "true" });
       } catch (err) {
-        alert(`Error! : ${err}`);
+        const { error } = err.response.data;
+        alert(`Error! : ${error.message}`);
       }
-    } else {
-      alert("passwords dont match");
     }
   };
-
   return (
     <Container>
       <Row className="justify-content-md-center">
@@ -71,14 +100,16 @@ export default function Signup() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                ref={confpswdref}
-              />
-            </Form.Group>
+            {!isLogin && (
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  ref={confpswdref}
+                />
+              </Form.Group>
+            )}
 
             <Row className="justify-content-lg-center">
               <Col className="text-center">
