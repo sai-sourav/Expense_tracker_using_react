@@ -5,6 +5,8 @@ const UserContext = createContext({
   setIsLogin: () => {},
   Profiledetails: "",
   setProfiledetails: () => {},
+  isEmailVerified: "",
+  setisEmailVerified: () => {}
 });
 
 export const UserContextProvider = (props) => {
@@ -25,6 +27,16 @@ export const UserContextProvider = (props) => {
       return true
      }
   });
+  const [isEmailVerified, setisEmailVerified] = useState(() => {
+    if (localStorage.getItem('verifyemail') === null){
+      return false
+    }
+    else if (localStorage.getItem('verifyemail') === "false"){
+      return false
+    }else {
+      return true
+     }
+  })
   const updateLogin = () => {
     setIsLogin((prev) => !prev);
   };
@@ -33,11 +45,17 @@ export const UserContextProvider = (props) => {
     setProfiledetails(bool)
   }
 
+  const updateEmailVerified = (bool) => {
+    setisEmailVerified(bool);
+  }
+
   const values = {
     isLogin: isLogin,
     setIsLogin: updateLogin,
     Profiledetails: Profiledetails,
     setProfiledetails: updateProfiledetails,
+    isEmailVerified: isEmailVerified,
+    setisEmailVerified: updateEmailVerified
   };
   return (
     <UserContext.Provider value={values}>{props.children}</UserContext.Provider>

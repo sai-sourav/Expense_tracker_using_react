@@ -72,6 +72,8 @@ export default function Signup() {
           userctx.setProfiledetails(false);
           localStorage.setItem('profile', false);
         }
+        userctx.setisEmailVerified(users[0].emailVerified)
+        localStorage.setItem('verifyemail', users[0].emailVerified)
         e.target.reset();
         userctx.setIsLogin();
         navigate("/home");

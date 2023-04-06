@@ -5,6 +5,9 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import "./Header.css";
 import UserContext from "../../../Context/user-context";
+import axios from "axios";
+
+const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -29,8 +32,21 @@ export default function Header() {
   const LogoutHandler = () => {
     localStorage.removeItem('authToken');
     userctx.setIsLogin((prev) => !prev );
-    localStorage.removeItem('profile')
+    localStorage.removeItem('profile');
+    localStorage.removeItem('verifyemail');
     navigate('/signup')
+  }
+  const verifyemailhandler = async() => {
+    try{
+      await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`,{
+        requestType : "VERIFY_EMAIL",
+        idToken : localStorage.getItem('authToken')
+      });
+      alert("Verify link sent to you mail");
+    }catch(err){
+      const { error } = err.response.data;
+      alert(`Error! : ${error.message}`);
+    }
   }
   return (
     <Navbar bg="dark" expand="lg" sticky="top" variant="dark">
@@ -68,6 +84,7 @@ export default function Header() {
           </Nav>
         </Navbar.Collapse>
         {content}
+        {userctx.isLogin && !userctx.isEmailVerified && <Button variant="success" onClick={verifyemailhandler} style={{marginRight: "2rem"}}>Verify Email</Button>}
         {userctx.isLogin && <Button variant="danger" onClick={LogoutHandler}>Logout</Button>}
       </Container>
     </Navbar>
