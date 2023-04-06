@@ -58,14 +58,23 @@ export default function Signup() {
         );
         const { idToken } = response.data;
         localStorage.setItem("authToken", idToken);
+        const response1 = await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_KEY}`,
+          {
+            idToken: localStorage.getItem("authToken"),
+          }
+        );
+        const users = response1.data.users;
+        if(users[0].displayName) {
+          userctx.setProfiledetails(true);
+          localStorage.setItem('profile', true);
+        }else{
+          userctx.setProfiledetails(false);
+          localStorage.setItem('profile', false);
+        }
         e.target.reset();
-        console.log({
-          email: email,
-          password: pswd,
-          idToken: idToken,
-        });
         userctx.setIsLogin();
-        navigate("/home", { replace: "true" });
+        navigate("/home");
       } catch (err) {
         const { error } = err.response.data;
         alert(`Error! : ${error.message}`);

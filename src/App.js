@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import Layout from './Compnents/Layout/Layout'
 import Signup from './Compnents/Pages/Signup/Signup';
@@ -14,9 +14,11 @@ function App() {
     <div className="App">
       <Layout>
         <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/Home" element={<Home />} />
+          <Route path='/' element={userctx.isLogin ? <Navigate to="/Home" /> : <Navigate to="/signup" />} />
+          {!userctx.isLogin && <Route path="/signup" element={<Signup />} />}
+          {userctx.isLogin && <Route path="/Home" element={<Home />} />}
           {userctx.isLogin && <Route path='/completeprofile' element={<CompleteProfile />} />}
+          <Route path="*" element={<Navigate to="/Home" />} />
         </Routes>
       </Layout>
     </div>

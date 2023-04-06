@@ -1,18 +1,77 @@
-import React, { useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Container, Row, Col, InputGroup } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 import "./CompleteProfile.css";
 import axios from "axios";
+import UserContext from "../../../Context/user-context";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function CompleteProfile() {
+  const [isEditMode, updateisEditMode] = useState(true);
+  const userctx = useContext(UserContext);
   const firstnameref = useRef();
   const secondnameref = useRef();
   const linkref = useRef();
-  const phoneref = useRef();
+
+  useEffect(() => {
+    (async() => {
+      const response = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_KEY}`,
+        {
+          idToken: localStorage.getItem("authToken"),
+        }
+      );
+      const users = response.data.users;
+      if(users[0].displayName){
+        firstnameref.current.value = users[0].displayName.split(" ")[0];
+        secondnameref.current.value = users[0].displayName.split(" ")[1];
+        linkref.current.value = users[0].photoUrl;
+        updateisEditMode(false);
+      }else{
+        updateisEditMode(true);
+      }
+    })();
+  },[])
+
+  let buttons = (
+    <Col className="text-center">
+      <Button
+        variant="primary"
+        type="submit"
+        style={{ width: "100%" }}
+      >
+        Submit
+      </Button>
+    </Col>
+  );
+  if (userctx.Profiledetails) {
+    buttons = (
+      <>
+        <Col className="text-center">
+          <Button
+            variant="primary"
+            style={{ width: "100%" }}
+            onClick={() => updateisEditMode((prev) => !prev)}
+          >
+            Edit
+          </Button>
+        </Col>
+        <Col className="text-center">
+          <Button
+            variant="primary"
+            type="submit"
+            style={{ width: "100%" }}
+            disabled={!isEditMode}
+          >
+            Submit
+          </Button>
+        </Col>
+      </>
+    );
+  }
   const clickHandler = async (e) => {
     e.preventDefault();
     try {
@@ -48,34 +107,28 @@ export default function CompleteProfile() {
                   type="text"
                   placeholder="First Name"
                   ref={firstnameref}
+                  disabled={!isEditMode}
                 />
                 <Form.Control
                   type="text"
                   placeholder="Last Name"
                   ref={secondnameref}
+                  disabled={!isEditMode}
                 />
               </InputGroup>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Profile Pic Link</Form.Label>
-              <Form.Control type="text" placeholder="link" ref={linkref} />
+              <Form.Control
+                type="text"
+                placeholder="link"
+                ref={linkref}
+                disabled={!isEditMode}
+              />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control type="text" placeholder="phone" ref={phoneref} />
-            </Form.Group>
-
             <Row className="justify-content-lg-center">
-              <Col className="text-center">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  style={{ width: "60%" }}
-                >
-                  Submit
-                </Button>
-              </Col>
+              {buttons}
             </Row>
           </Form>
         </Col>
