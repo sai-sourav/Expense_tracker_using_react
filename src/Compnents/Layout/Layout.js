@@ -4,13 +4,16 @@ import Footer from "./Footer/Footer";
 
 import "./Layout.css"
 import { Container } from "react-bootstrap";
+import { useContext } from "react";
+import UserContext from "../../Context/user-context";
 
 export default function Layout(props) {
+  const userctx = useContext(UserContext);
   return (
     <>
-      <Header />
+      {userctx.isLogin && <Header />}
       <Container className="body-background">{props.children}</Container>
-      <Footer />
+      {userctx.isLogin && <Footer />}
     </>
   );
 }

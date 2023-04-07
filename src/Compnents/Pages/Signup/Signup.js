@@ -10,7 +10,7 @@ import UserContext from "../../../Context/user-context";
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function Signup() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [type, setType] = useState("signin");
   const userctx = useContext(UserContext);
   const emailref = useRef();
   const pswdref = useRef();
@@ -21,8 +21,8 @@ export default function Signup() {
   const clickHandler = async (e) => {
     e.preventDefault();
     const email = emailref.current.value;
-    const pswd = pswdref.current.value;
-    if (!isLogin) {
+    if (type === "signup") {
+      const pswd = pswdref.current.value;
       const confpswd = confpswdref.current.value;
       if (pswd === confpswd) {
         try {
@@ -38,7 +38,7 @@ export default function Signup() {
             email: email,
             password: pswd,
           });
-          setIsLogin((prev) => !prev);
+          setType("signin");
         } catch (err) {
           const { error } = err.response.data;
           alert(`Error! : ${error.message}`);
@@ -46,8 +46,24 @@ export default function Signup() {
       } else {
         alert("passwords dont match");
       }
-    } else {
+    } else if (type === "forgot") {
       try {
+        await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`,
+          {
+            requestType: "PASSWORD_RESET",
+            email: email,
+          }
+        );
+        alert("Password reset link sent to email");
+        setType("signin")
+      } catch (err) {
+        const { error } = err.response.data;
+        alert(`Error! : ${error.message}`);
+      }
+    } else if (type === "signin") {
+      try {
+        const pswd = pswdref.current.value;
         const response = await axios.post(
           `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
           {
@@ -65,15 +81,15 @@ export default function Signup() {
           }
         );
         const users = response1.data.users;
-        if(users[0].displayName) {
+        if (users[0].displayName) {
           userctx.setProfiledetails(true);
-          localStorage.setItem('profile', true);
-        }else{
+          localStorage.setItem("profile", true);
+        } else {
           userctx.setProfiledetails(false);
-          localStorage.setItem('profile', false);
+          localStorage.setItem("profile", false);
         }
-        userctx.setisEmailVerified(users[0].emailVerified)
-        localStorage.setItem('verifyemail', users[0].emailVerified)
+        userctx.setisEmailVerified(users[0].emailVerified);
+        localStorage.setItem("verifyemail", users[0].emailVerified);
         e.target.reset();
         userctx.setIsLogin();
         navigate("/home");
@@ -83,14 +99,23 @@ export default function Signup() {
       }
     }
   };
+  const signinsignuphandler = () => {
+    if (type === "signin") {
+      setType("signup");
+    } else {
+      setType("signin");
+    }
+  };
   return (
     <Container>
       <Row className="justify-content-md-center">
         <Col lg={3}>
-          <Form className="signupform" onSubmit={clickHandler}>
+          <Form className="signupform" onSubmit={clickHandler} style={{marginTop: "8rem"}}>
             <Row>
               <Col>
-                <h2>{isLogin ? "Login" : "Signup"}</h2>
+                {type === "signin" && <h2>Login</h2>}
+                {type === "signup" && <h2>Signup</h2>}
+                {type === "forgot" && <h2>Forgot Password</h2>}
               </Col>
             </Row>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -100,21 +125,18 @@ export default function Signup() {
                 placeholder="Enter email"
                 ref={emailref}
               />
-              <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text>
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
+            {type !== "forgot" && <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Password"
                 ref={pswdref}
               />
-            </Form.Group>
+            </Form.Group>}
 
-            {!isLogin && (
+            {type === "signup" && (
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
@@ -132,7 +154,9 @@ export default function Signup() {
                   type="submit"
                   style={{ width: "60%" }}
                 >
-                  {isLogin ? "Login" : "Signup"}
+                  {type === "signin" && "Login"}
+                  {type === "signup" && "Signup"}
+                  {type === "forgot" && "Reset Password"}
                 </Button>
               </Col>
             </Row>
@@ -141,12 +165,21 @@ export default function Signup() {
             <Col className="text-center">
               <Button
                 variant="link"
-                onClick={() => setIsLogin((prev) => !prev)}
+                onClick={signinsignuphandler}
+                style={{ color: "white" }}
+                className="login-signup-link"
               >
-                {isLogin
-                  ? "Don't have an account? Signup"
-                  : "Already have an Account? Signin"}
+                {type === "signin" && "Don't have an account? Signup"}
+                {type === "signup" && "Already have an Account? Signin"}
+                {type === "forgot" && "Already have an Account? Signin"}
               </Button>
+              {type !== "forgot" && <Button
+                variant="link"
+                onClick={() => setType("forgot")}
+                style={{ color: "white" }}
+              >
+                Forgot Password?
+              </Button>}
             </Col>
           </Row>
         </Col>
