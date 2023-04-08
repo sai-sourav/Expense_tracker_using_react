@@ -12,7 +12,7 @@ export default function Layout(props) {
   return (
     <>
       {userctx.isLogin && <Header />}
-      <Container className="body-background">{props.children}</Container>
+      <Container className="body-background" fluid>{props.children}</Container>
       {userctx.isLogin && <Footer />}
     </>
   );

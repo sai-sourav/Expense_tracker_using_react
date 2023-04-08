@@ -8,13 +8,16 @@ import "../node_modules/react-bootstrap/dist/react-bootstrap";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import { BrowserRouter } from "react-router-dom";
 import { UserContextProvider } from "./Context/user-context";
+import { ExpenseContextProvider } from "./Context/expense-context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <UserContextProvider>
-        <App />
+        <ExpenseContextProvider>
+          <App />
+        </ExpenseContextProvider>
       </UserContextProvider>
     </BrowserRouter>
   </React.StrictMode>

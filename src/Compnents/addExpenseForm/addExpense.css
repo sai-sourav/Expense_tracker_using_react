@@ -1,0 +1,7 @@
+.add-expense-form {
+    border: 2px solid red;
+    margin-top: 1rem;
+    padding: 2rem;
+    border: 2px solid rgb(205, 196, 196);
+    background-color: rgb(245, 240, 235);
+}

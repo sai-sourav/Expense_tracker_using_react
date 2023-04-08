@@ -1,7 +1,12 @@
-import React from 'react'
+import React from "react";
+import AddExpense from "../../addExpenseForm/addExpense";
+import ExpensesList from "../../Expenses/ExpensesList";
 
 export default function Home() {
   return (
-    <h1>Welcome Home</h1>
-  )
+    <>
+      <AddExpense />
+      <ExpensesList />
+    </>
+  );
 }
