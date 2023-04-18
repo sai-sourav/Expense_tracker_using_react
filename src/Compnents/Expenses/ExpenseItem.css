@@ -3,6 +3,13 @@
     border: none;
     border-radius: 5px;
     flex-direction: row;
-    padding: 1rem;
+    padding: 0.5rem;
     background-color: rgb(151, 144, 228);
+    user-select: none;
+}
+
+.inputfield {
+    width: 10rem;
+    text-align: center;
+    font-weight: 500;
 }

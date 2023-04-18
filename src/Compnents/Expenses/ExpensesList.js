@@ -31,7 +31,13 @@ export default function ExpensesList() {
             `https://expensetracker-6bf2c-default-rtdb.asia-southeast1.firebasedatabase.app/${username}_expenses.json`
           );
           if (resp.data) {
-            changeExpenses(Object.values(resp.data));
+            const expensesdata = Object.keys(resp.data).map((key) => {
+              return{
+                id : key,
+                ...resp.data[key]
+              }
+            })
+            changeExpenses(expensesdata);
           }
         } catch (err) {
           console.log(err);
