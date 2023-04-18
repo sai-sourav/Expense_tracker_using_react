@@ -1,4 +1,5 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef } from "react";
+import axios from "axios";
 import {
   Container,
   Form,
@@ -9,22 +10,45 @@ import {
 } from "react-bootstrap";
 
 import "./addExpense.css";
-import ExpenseContext from "../../Context/expense-context";
+// import ExpenseContext from "../../Context/expense-context";
+// import UserContext from "../../Context/user-context";
+
+const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function AddExpense() {
-  const expensectx = useContext(ExpenseContext);
+  // const userctx = useContext(UserContext)
+  // const expensectx = useContext(ExpenseContext);
   const amountref = useRef();
   const descref = useRef();
   const catref = useRef();
 
-  const submitHandler = (evt) => {
+  const submitHandler = async (evt) => {
     evt.preventDefault();
+
     const obj = {
       amount : amountref.current.value,
       desc : descref.current.value,
       category : catref.current.value
     }
-    expensectx.updateExpenses(obj);
+    try{
+      const response = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_KEY}`,
+        {
+          idToken: localStorage.getItem("authToken"),
+        }
+      );
+      const users = response.data.users;
+      if(users[0]){
+      const username = users[0].email.split("@")[0]
+      await axios.post(
+        `https://expensetracker-6bf2c-default-rtdb.asia-southeast1.firebasedatabase.app/${username}_expenses.json`,obj
+      );
+      }
+    }catch(err){
+      console.log(err);
+    }
+
+    // expensectx.updateExpenses(obj);
     evt.target.reset();
   }
   return (

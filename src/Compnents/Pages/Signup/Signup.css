@@ -5,6 +5,7 @@
     background-color: rgb(245, 240, 235);
     border-radius: 5px;
     box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+    width: 45% !important;
 }
 
 .login-signup-link {

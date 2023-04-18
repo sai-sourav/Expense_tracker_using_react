@@ -6,7 +6,9 @@ const UserContext = createContext({
   Profiledetails: "",
   setProfiledetails: () => {},
   isEmailVerified: "",
-  setisEmailVerified: () => {}
+  setisEmailVerified: () => {},
+  username: "",
+  setUsername: () => {}
 });
 
 export const UserContextProvider = (props) => {
@@ -37,6 +39,7 @@ export const UserContextProvider = (props) => {
       return true
      }
   })
+  const [userName, setUsername] = useState("");
   const updateLogin = () => {
     setIsLogin((prev) => !prev);
   };
@@ -55,7 +58,9 @@ export const UserContextProvider = (props) => {
     Profiledetails: Profiledetails,
     setProfiledetails: updateProfiledetails,
     isEmailVerified: isEmailVerified,
-    setisEmailVerified: updateEmailVerified
+    setisEmailVerified: updateEmailVerified,
+    username: userName,
+    setUsername: (name) => setUsername(name)
   };
   return (
     <UserContext.Provider value={values}>{props.children}</UserContext.Provider>
