@@ -4,16 +4,15 @@ import Footer from "./Footer/Footer";
 
 import "./Layout.css"
 import { Container } from "react-bootstrap";
-import { useContext } from "react";
-import UserContext from "../../Context/user-context";
+import { useSelector } from "react-redux";
 
 export default function Layout(props) {
-  const userctx = useContext(UserContext);
+  const isLogin = useSelector(state => state.user.isLogin)
   return (
     <>
-      {userctx.isLogin && <Header />}
+      {isLogin && <Header />}
       <Container className="body-background" fluid>{props.children}</Container>
-      {userctx.isLogin && <Footer />}
+      {isLogin && <Footer />}
     </>
   );
 }

@@ -1,20 +1,20 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Row, Col, InputGroup } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 import "./CompleteProfile.css";
 import axios from "axios";
-import UserContext from "../../../Context/user-context";
+import { useSelector } from "react-redux";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function CompleteProfile() {
   const [isEditMode, updateisEditMode] = useState(true);
-  const userctx = useContext(UserContext);
   const firstnameref = useRef();
   const secondnameref = useRef();
   const linkref = useRef();
+  const Profiledetails = useSelector(state => state.user.Profiledetails)
 
   useEffect(() => {
     (async() => {
@@ -47,7 +47,8 @@ export default function CompleteProfile() {
       </Button>
     </Col>
   );
-  if (userctx.Profiledetails) {
+  // if (userctx.Profiledetails) {
+    if (Profiledetails) {  
     buttons = (
       <>
         <Col className="text-center">

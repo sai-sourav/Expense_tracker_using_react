@@ -7,18 +7,16 @@ import reportWebVitals from "./reportWebVitals";
 import "../node_modules/react-bootstrap/dist/react-bootstrap";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import { BrowserRouter } from "react-router-dom";
-import { UserContextProvider } from "./Context/user-context";
-import { ExpenseContextProvider } from "./Context/expense-context";
+import { Provider } from "react-redux";
+import store from "./Redux/store"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <UserContextProvider>
-        <ExpenseContextProvider>
+    <Provider store={store}>
           <App />
-        </ExpenseContextProvider>
-      </UserContextProvider>
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>
 );

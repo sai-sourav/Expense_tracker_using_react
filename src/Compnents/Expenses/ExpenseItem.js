@@ -3,12 +3,15 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import "./ExpenseItem.css";
 import { Form, FloatingLabel } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { expenseAction } from "../../Redux/Reducer";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function ExpenseItem(props) {
   const [iseditmode, setiseditMode] = useState(false);
   const { id, amount, desc, category } = props.expense;
+  const dispatch = useDispatch()
   const amountref = useRef();
   const descref = useRef();
   const catref = useRef();
@@ -56,13 +59,14 @@ export default function ExpenseItem(props) {
         await axios.delete(
           `https://expensetracker-6bf2c-default-rtdb.asia-southeast1.firebasedatabase.app/${username}_expenses/${id}.json`
         );
+        dispatch(expenseAction.deleteExpense(id))
       }
     } catch (err) {
       console.log(err);
     }
   };
   return (
-    <Container className="expense-item">
+    <Container className="expense-item" >
       <Row className="align-items-center" style={{ marginLeft: "9rem" }}>
         <Col xs={2}>
           <FloatingLabel controlId="amount" label="Money Spent">

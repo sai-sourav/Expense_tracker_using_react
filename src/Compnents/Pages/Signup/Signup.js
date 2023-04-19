@@ -1,17 +1,18 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "./Signup.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import UserContext from "../../../Context/user-context";
+import { useDispatch } from "react-redux";
+import { userAction } from "../../../Redux/userReducer";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function Signup() {
+  const dispatch = useDispatch();
   const [type, setType] = useState("signin");
-  const userctx = useContext(UserContext);
   const emailref = useRef();
   const pswdref = useRef();
   const confpswdref = useRef();
@@ -83,17 +84,16 @@ export default function Signup() {
         const users = response1.data.users;
         console.log(users[0]);
         if (users[0].displayName) {
-          userctx.setProfiledetails(true);
+          dispatch(userAction.updateProfiledetails(true));
           localStorage.setItem("profile", true);
         } else {
-          userctx.setProfiledetails(false);
+          dispatch(userAction.updateProfiledetails(false));
           localStorage.setItem("profile", false);
         }
-        userctx.setisEmailVerified(users[0].emailVerified);
+        dispatch(userAction.updateEmailVerified(users[0].emailVerified));
         localStorage.setItem("verifyemail", users[0].emailVerified);
         e.target.reset();
-        userctx.setIsLogin();
-        userctx.setUsername(users[0].email.split('@')[0])
+        dispatch(userAction.updateLogin());
         navigate("/home");
       } catch (err) {
         const { error } = err.response.data;

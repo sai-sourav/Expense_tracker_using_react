@@ -2,5 +2,7 @@
     border: 2px solid rgb(205, 196, 196);
     background-color: rgb(245, 240, 235);
     margin-top: 1rem;
-    min-height: 30rem;
+    /* min-height: 30rem; */
+    overflow: scroll;
+    height: 65vh;
 }

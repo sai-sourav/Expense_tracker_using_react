@@ -10,27 +10,25 @@ import {
 } from "react-bootstrap";
 
 import "./addExpense.css";
-// import ExpenseContext from "../../Context/expense-context";
-// import UserContext from "../../Context/user-context";
+import { useDispatch } from "react-redux";
+import { expenseAction } from "../../Redux/Reducer";
 
 const API_KEY = "AIzaSyAe5vc2TP8RDgqhG681woI8zJAXLHgu4sw";
 
 export default function AddExpense() {
-  // const userctx = useContext(UserContext)
-  // const expensectx = useContext(ExpenseContext);
+  const dispatch = useDispatch();
   const amountref = useRef();
   const descref = useRef();
   const catref = useRef();
 
   const submitHandler = async (evt) => {
     evt.preventDefault();
-
     const obj = {
-      amount : amountref.current.value,
-      desc : descref.current.value,
-      category : catref.current.value
-    }
-    try{
+      amount: amountref.current.value,
+      desc: descref.current.value,
+      category: catref.current.value,
+    };
+    try {
       const response = await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_KEY}`,
         {
@@ -38,19 +36,19 @@ export default function AddExpense() {
         }
       );
       const users = response.data.users;
-      if(users[0]){
-      const username = users[0].email.split("@")[0]
-      await axios.post(
-        `https://expensetracker-6bf2c-default-rtdb.asia-southeast1.firebasedatabase.app/${username}_expenses.json`,obj
-      );
+      if (users[0]) {
+        const username = users[0].email.split("@")[0];
+        await axios.post(
+          `https://expensetracker-6bf2c-default-rtdb.asia-southeast1.firebasedatabase.app/${username}_expenses.json`,
+          obj
+        );
+        dispatch(expenseAction.addExpense(obj));
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
-
-    // expensectx.updateExpenses(obj);
     evt.target.reset();
-  }
+  };
   return (
     <Form className="add-expense-form" onSubmit={submitHandler}>
       <Container fluid>
@@ -62,7 +60,11 @@ export default function AddExpense() {
           </Col>
           <Col>
             <FloatingLabel controlId="desc" label="Description">
-              <Form.Control type="text" placeholder="description" ref={descref} />
+              <Form.Control
+                type="text"
+                placeholder="description"
+                ref={descref}
+              />
             </FloatingLabel>
           </Col>
           <Col>

@@ -4,20 +4,18 @@ import Layout from './Compnents/Layout/Layout'
 import Signup from './Compnents/Pages/Signup/Signup';
 import Home from './Compnents/Pages/Home/Home';
 import CompleteProfile from './Compnents/Pages/CompleteProfile/CompleteProfile';
-import { useContext } from 'react';
-import UserContext from './Context/user-context';
+import { useSelector } from 'react-redux';
 
 function App() {
-
-  const userctx = useContext(UserContext)
+  const isLogin = useSelector(state => state.user.isLogin)
   return (
     <div className="App">
       <Layout>
         <Routes>
-          <Route path='/' element={userctx.isLogin ? <Navigate to="/Home" /> : <Navigate to="/signup" />} />
-          {!userctx.isLogin && <Route path="/signup" element={<Signup />} />}
-          {userctx.isLogin && <Route path="/Home" element={<Home />} />}
-          {userctx.isLogin && <Route path='/completeprofile' element={<CompleteProfile />} />}
+          <Route path='/' element={isLogin ? <Navigate to="/Home" /> : <Navigate to="/signup" />} />
+          {!isLogin && <Route path="/signup" element={<Signup />} />}
+          {isLogin && <Route path="/Home" element={<Home />} />}
+          {isLogin && <Route path='/completeprofile' element={<CompleteProfile />} />}
           <Route path="*" element={<Navigate to="/Home" />} />
         </Routes>
       </Layout>
